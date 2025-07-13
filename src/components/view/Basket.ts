@@ -4,15 +4,12 @@ import { IEvents } from '../base/events';
 
 interface IBasket {
 	basketList: HTMLElement[];
-	counter: number;
 	totalPrice: number;
 }
 
 export class Basket extends Component<IBasket> {
 	protected events: IEvents;
 
-	protected headerBasketCounter: HTMLElement;
-	protected headerBasketButton: HTMLButtonElement;
 	protected basketListContainer: HTMLElement;
 	protected basketPrice: HTMLElement;
 	protected basketButton: HTMLButtonElement;
@@ -21,17 +18,9 @@ export class Basket extends Component<IBasket> {
 		super(container);
 		this.events = events;
 
-		this.headerBasketCounter = document.querySelector(
-			'.header__basket-counter'
-		);
-		this.headerBasketButton = document.querySelector('.header__basket');
 		this.basketListContainer = container.querySelector('.basket__list');
 		this.basketPrice = container.querySelector('.basket__price');
 		this.basketButton = container.querySelector('.basket__button');
-
-		this.headerBasketButton.addEventListener('click', () => {
-			this.events.emit('basket: open');
-		});
 
 		this.basketButton.addEventListener('click', () => {
 			this.events.emit('order: open');
@@ -43,10 +32,6 @@ export class Basket extends Component<IBasket> {
 		else this.basketButton.disabled = false;
 		Object.assign(this, data ?? {});
 		return this.container;
-	}
-
-	set counter(value: number) {
-		this.headerBasketCounter.textContent = String(value);
 	}
 
 	set totalPrice(value: number) {

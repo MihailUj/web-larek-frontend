@@ -8,13 +8,13 @@ import { Contacts } from './components/view/Contacts';
 import { Order } from './components/view/Order';
 import { OrderData } from './components/data/OrderData';
 import { Card } from './components/view/Card';
-import { ProductsContainer } from './components/view/ProductsContainer';
 import { ProductsData } from './components/data/ProductsData';
 import { Success } from './components/view/Success';
 import './scss/styles.scss';
 import { IApi, IOrder } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
 import { cloneTemplate } from './utils/utils';
+import { Page } from './components/view/Page';
 
 const events = new EventEmitter();
 
@@ -25,9 +25,7 @@ const orderData = new OrderData(events);
 const baseApi: IApi = new Api(API_URL, settings);
 const api = new AppApi(CDN_URL, baseApi);
 
-const productsContainer = new ProductsContainer(
-	document.querySelector('.gallery')
-);
+
 const modalContainer = new Modal(
 	document.querySelector('#modal-container'),
 	events
@@ -44,6 +42,8 @@ const orderTemplate: HTMLTemplateElement = document.querySelector('#order');
 const contactsTemplate: HTMLTemplateElement =
 	document.querySelector('#contacts');
 const successTemplate: HTMLTemplateElement = document.querySelector('#success');
+
+const page = new Page(document.querySelector('.page'), events);
 
 const basketModal = new Basket(cloneTemplate(basketTemplate), events);
 const orderModal = new Order(cloneTemplate(orderTemplate), events);
@@ -79,7 +79,7 @@ events.on('initialData: loaded', () => {
 		);
 		return cardInstant.render(product, basketData.inBasket(product.id));
 	});
-	productsContainer.render({ catalog: productArray });
+	page.render({ catalog: productArray });
 });
 
 events.on('basket: open', () => {
@@ -137,7 +137,7 @@ events.on('cardBasket: changed', (data: { card: Card }) => {
 
 events.on('basket: changed', () => {
 	const basketProductsCount = basketData.counter;
-	basketModal.render({ counter: basketProductsCount });
+	page.render({ counter: basketProductsCount });
 });
 
 events.on('order: changed', (data: { field: string; value: string }) => {
@@ -181,4 +181,9 @@ events.on('success: close', () => {
 events.on('modal: close', () => {
 	orderModal.resetForm();
 	contactsModal.resetForm();
+	page.locked = false;
 });
+
+events.on('modal: open', () => {
+	page.locked = true;
+})

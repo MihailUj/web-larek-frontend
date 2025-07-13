@@ -10,13 +10,11 @@ interface IModal {
 export class Modal extends Component<IModal> {
 	protected events: IEvents;
 	protected _content: HTMLElement;
-	protected _pageWrapper: HTMLElement;
 
 	constructor(protected container: HTMLElement, events: IEvents) {
 		super(container);
 		this.events = events;
 		this._content = container.querySelector('.modal__content');
-		this._pageWrapper = document.querySelector('.page__wrapper');
 
 		const closeButtonElement = this.container.querySelector('.modal__close');
 		closeButtonElement.addEventListener('click', this.close.bind(this));
@@ -31,22 +29,13 @@ export class Modal extends Component<IModal> {
 		this._content.replaceChildren(value);
 	}
 
-	set locked(value: boolean) {
-		if (value) {
-			this._pageWrapper.classList.add('page__wrapper_locked');
-		} else {
-			this._pageWrapper.classList.remove('page__wrapper_locked');
-		}
-	}
-
 	open() {
 		this.container.classList.add('modal_active');
-		this.locked = true;
+		this.events.emit('modal: open');
 	}
 
 	close() {
 		this.container.classList.remove('modal_active');
-		this.locked = false;
 		this.content = null;
 		this.events.emit('modal: close');
 	}

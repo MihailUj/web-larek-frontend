@@ -90,7 +90,8 @@ export class Card extends Component<IProduct> {
 
 	set price(price: number) {
 		if (this.cardPrice)
-			this.cardPrice.textContent = String(price || 'Бесценно');
+			if(price) this.cardPrice.textContent = String(price + ' синапсов');
+			else this.cardPrice.textContent = String('Бесценно');
 	}
 
 	set id(id: string) {
